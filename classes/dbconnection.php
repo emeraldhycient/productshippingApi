@@ -1,4 +1,5 @@
 <?php
+session_start();
 
 class dbconnect {
 
@@ -10,10 +11,20 @@ class dbconnect {
    }
 
    private static function conn (){
-       self::$conn = new mysqli("localhost","root","","producttracker");
+       self::$conn = new mysqli("localhost","root","","shipment");
       /* if(!empty(self::$conn)){
            echo "connected";
        }*/
+   }
+
+   protected static function filter($data){
+       $data = trim($data);
+       $data = htmlentities($data);
+       $data = htmlspecialchars($data);
+       $data = stripslashes($data);
+       $data = strip_tags($data);
+       $data = self::$conn->real_escape_string($data);
+          return $data;
    }
 
 }

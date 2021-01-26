@@ -18,10 +18,30 @@ echo json_encode($data);
 */
 
 
-if(isset($_POST["name"])){
+if(isset($_POST["username"])){
     $data2 = array(
-        "name"=> $_POST["name"],
-        "age"=> $_POST["age"],
+        "name"=> $_POST["username"],
+        "email"=> $_POST["email"],
+        "phone"=> $_POST["phone"],
+        "pass"=> $_POST["password"]
+    );
+    
+    echo json_encode($data2);
+}
+
+
+if(isset($_POST["email"])){
+    $data2 = array(
+        "email"=> $_POST["email"],
+        "pass"=> $_POST["password"]
+    );
+    
+    echo json_encode($data2);
+}
+
+if(isset($_POST["tracking"])){
+    $data2 = array(
+        "tracking"=> $_POST["tracking"]
     );
     
     echo json_encode($data2);
