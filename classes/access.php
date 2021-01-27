@@ -24,7 +24,10 @@ class Access extends dbconnect {
 
                         $data = array(
                             "status" => "success",
-                            "message" => "login successful"
+                            "data" => array(
+                                "userid" => $row->userid,
+                                "id" => $row->id
+                            )
                         );
 
                     }
@@ -67,7 +70,33 @@ class Access extends dbconnect {
 
         $sql = "INSERT INTO shipmentadmin (userid,email,username,phone,pass) VALUES ('$userid','$email','$username','$phone','$hash')";
         $query = self::$conn->query($sql);
+
+        if($query){
+
+            $_SESSION["logged"] = $userid;
+            $_SESSION["username"] = $username;
+
+
+            $data = array(
+                "status" => "success",
+                "data" => array(
+                    "userid" => $userid,
+                    "id" => self::$conn->insert_id
+                )
+            );
+
+
+
+        }else{
+
+            $data = array(
+                "status" => "failed",
+                "message" => self::$conn->error
+            );
+
+        }
         
+            return json_encode($data);
 
     }
 

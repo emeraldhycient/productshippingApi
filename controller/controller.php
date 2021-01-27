@@ -9,14 +9,6 @@ require_once("../classes/dbconnection.php");
 
 $db = new dbconnect();
 
-/*$data = array(
-'name'=>'hycient',
-'age'=>'20'
-);
-
-echo json_encode($data);
-*/
-
 
 if(isset($_POST["username"])){
     $data2 = array(
