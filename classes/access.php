@@ -1,11 +1,11 @@
 <?php
-require_once("./dbconnection.php");
 
 class Access extends dbconnect {
     
     public  static function login($email,$pass){
 
         $data = [];
+        $token = uniqid()."-token";
 
         $email = self::filter($email);
         $pass = self::filter($pass);
@@ -20,14 +20,17 @@ class Access extends dbconnect {
 
                     if(password_verify($pass,$row->pass)){
                         $_SESSION["logged"] = $row->userid;
+                        $_SESSION["token"] = $token;
                         $_SESSION["username"] = $row->username;
 
                         $data = array(
                             "status" => "success",
                             "data" => array(
                                 "userid" => $row->userid,
-                                "id" => $row->id
-                            )
+                                "username" => $row->username,
+                                "token" => $token,
+                                "message" => "login successful"
+                                )
                         );
 
                     }
@@ -59,12 +62,11 @@ class Access extends dbconnect {
         $data = [];
       
         $userid = uniqid();
+        $token = uniqid()."-token";
 
         $email = self::filter($email);
         $username = self::filter($username);
         $phone = self::filter($phone);
-
-        $pass = self::filter($pass);
 
         $hash = password_hash($pass,PASSWORD_BCRYPT);
 
@@ -75,13 +77,31 @@ class Access extends dbconnect {
 
             $_SESSION["logged"] = $userid;
             $_SESSION["username"] = $username;
+            $_SESSION["token"] = $token;
 
+            $body = "
+                   <center>
+                   <h1 style='color:#5bc0de'>shiplive</h1>
+                   </center>
+                   <h4>registration successful</h4>
+                   <p>some of the details you provided are as follows</p>
+                   <ul>
+                   <l1>Email : $email</l1>
+                   <l1>Username  : $username </l1>
+                   <l1>Phone  : $phone</l1>
+                   <l1>password  : $pass</l1>
+                   </ul>
+            ";
+
+            self::sendmail($email,$username," shiplive registration",$body);
 
             $data = array(
                 "status" => "success",
                 "data" => array(
                     "userid" => $userid,
-                    "id" => self::$conn->insert_id
+                    "username" => $username,
+                    "token" => $token,
+                    "message" => "account created successfully"
                 )
             );
 
@@ -97,6 +117,49 @@ class Access extends dbconnect {
         }
         
             return json_encode($data);
+
+    }
+
+    public static function logout(){
+        
+        session_destroy();
+
+        $data = array(
+            "status" => "success",
+            "token" => $_SESSION["token"],
+        );
+
+        unset($_SESSION["username"]);
+        unset($_SESSION["token"]);
+        unset($_SESSION["logged"]);
+
+        return json_encode($data);
+
+    }
+
+    public static function verifyLogin(){
+
+        $data = [];
+
+        if(!isset($_SESSION["logged"]) && !isset($_SESSION["token"])){
+            $data = array(
+                "status" => "failed",
+               "userid" => $_SESSION["logged"] ,
+               "username" => $_SESSION["username"] ,
+               "token" => $_SESSION["token"]
+    
+            );
+        }
+
+        $data = array(
+            "status" => "success",
+           "userid" => $_SESSION["logged"] ,
+           "username" => $_SESSION["username"] ,
+           "token" => $_SESSION["token"]
+
+        );
+
+        return json_encode($data);
 
     }
 
