@@ -252,4 +252,33 @@ public static function listshipping(){
     
 }
 
+public static function deleteShipment($shipmentId){
+    $data = [];
+
+    $$shipmentId = self::filter($shipmentId);
+
+    $sql = "DELETE FROM shipmentdetails WHERE id='$shipmentId' ";
+
+    $query= self::$conn->query($sql);
+    
+    if($query){
+
+        $data = array(
+            'status' => "success",
+            "message" => "$shipmentId was deleted successfully"
+        );
+
+    }else{
+
+        $data = array(
+            'status' => "failed",
+            "message" => self::$conn->error
+        );
+        
+    }
+
+    return json_encode($data);
+
+}
+
 }
